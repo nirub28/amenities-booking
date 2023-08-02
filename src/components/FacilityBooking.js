@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import axios from "axios"; // If using Axios library
+import axios from "axios";
+import "../styles/main.css";
 
 const FacilityBooking = () => {
   const [facility, setFacility] = useState("");
@@ -7,9 +8,11 @@ const FacilityBooking = () => {
   const [slot, setSlot] = useState("");
   const [output, setOutput] = useState("");
 
+  const facilitiesList = ["Tennis Court", "Clubhouse"]; // List of facilities
+
   const bookFacility = async () => {
     try {
-      const response = await axios.post("http://localhost:8000/book", {
+      const response = await axios.post("https://amenities-booking-backend.onrender.com/book", {
         facility,
         date,
         slot,
@@ -24,16 +27,33 @@ const FacilityBooking = () => {
     }
   };
 
+  const resetBookingData = async () => {
+    try {
+      const response = await axios.get("https://amenities-booking-backend.onrender.com/reset");
+
+      // Handle the response from the Node.js server
+      setOutput(response.data.message);
+    } catch (error) {
+      // Handle errors
+      console.error("Error resetting booking data:", error);
+      setOutput("Resetting Booking Data Failed, Please try again.");
+    }
+  };
+
   return (
-    <div>
+    <div className="container">
       <h1>Facility Booking Module</h1>
+      <button className="reset-button" onClick={resetBookingData}>Reset Booking Data</button>
       <div>
         <label>Facility:</label>
-        <input
-          type="text"
-          value={facility}
-          onChange={(e) => setFacility(e.target.value)}
-        />
+        <select value={facility} onChange={(e) => setFacility(e.target.value)}>
+          <option value="">Select Facility</option>
+          {facilitiesList.map((facility) => (
+            <option key={facility} value={facility}>
+              {facility}
+            </option>
+          ))}
+        </select>
       </div>
       <div>
         <label>Date:</label>
